@@ -1,5 +1,7 @@
-import logo from "./WeatherAppLogo.jpg";
+import logo from "./WeatherAppLogo.png";
 import { IoSearchOutline } from "react-icons/io5";
+import { TbError404Off } from "react-icons/tb";
+import { TbFaceIdError } from "react-icons/tb";
 import "./App.css";
 
 import React, { useState } from "react";
@@ -27,7 +29,7 @@ function App() {
     <>
       <nav className="navbar navbar-expand-lg bg-body-tertiary">
         <div className="container-fluid">
-          <img src={logo} style={{ width: 50 }} alt="logo" />
+          <img src={logo} style={{ width: 40 }} alt="logo" />
           <a className="navbar-brand mx-auto" href="/">
             WeatherApp
           </a>
@@ -56,7 +58,20 @@ function App() {
 
       {weatherData &&
         (weatherData.cod === "404" ? (
-          <h1 className="text-center text-danger mt-5">No City Found!</h1>
+          <div className="text-center">
+            <div className="d-flex align-items-center justify-content-center mt-5">
+              <TbFaceIdError
+                className="text-danger"
+                style={{ fontSize: "5rem" }}
+              />
+              <h1 className="text-danger ml-5">No City Found!</h1>
+            </div>
+
+            <TbError404Off
+              className="text-danger mt-5"
+              style={{ fontSize: "5rem" }}
+            />
+          </div>
         ) : (
           <Results weatherData={weatherData} />
         ))}
