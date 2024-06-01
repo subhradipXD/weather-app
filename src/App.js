@@ -1,6 +1,6 @@
 import logo from "./WeatherAppLogo.jpg";
 import { IoSearchOutline } from "react-icons/io5";
-// import "./App.css";
+import "./App.css";
 
 import React, { useState } from "react";
 import Results from "./Results";
