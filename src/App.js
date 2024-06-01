@@ -1,106 +1,65 @@
+import logo from "./WeatherAppLogo.jpg";
+import { IoSearchOutline } from "react-icons/io5";
+// import "./App.css";
+
 import React, { useState } from "react";
-import Navbar from "./Navbar";
 import Results from "./Results";
-
-// const options = {
-//   enableHighAccuracy: true,
-//   timeout: 5000,
-//   maximumAge: 0,
-// };
-// function success(pos) {
-//   const crd = pos.coords;
-//   console.log("Your current position is:");
-//   console.log(`Latitude : ${crd.latitude}`);
-//   console.log(`Longitude: ${crd.longitude}`);
-//   console.log(`More or less ${crd.accuracy} meters.`);
-//   // weatherSearchByGeoLocation(crd);
-// }
-// function error(err) {
-//   console.warn(`ERROR(${err.code}): ${err.message}`);
-// }
-// navigator.geolocation.getCurrentPosition(success, error, options);
-
-// function weatherSearchByGeoLocation(crd) {
-//   fetch(
-//     "https://api.openweathermap.org/data/3.0/onecall?lat=" +
-//       crd.latitude.toFixed(2) +
-//       "&lon=" +
-//       crd.longitude.toFixed(2) +
-//       "&appid=877fe367e2cc86f1d48262dd0eaa94fd"
-//   )
-//     .then((response) => response.json())
-//     .then((data) => console.log(data));
-// }
-
-// document.getElementById('bg').style.backgroundImage = {logo};
+import axios from "axios";
 
 function App() {
   const [weatherData, setWeatherData] = useState(null);
-  function weatherSearchByInput() {
-    const inputValue = document.getElementById("inputValue").value;
-    console.log(inputValue);
-    fetch(
-      "https://api.openweathermap.org/data/2.5/weather?q=" +
-        inputValue +
-        "&appid=877fe367e2cc86f1d48262dd0eaa94fd"
-    )
-      .then((response) => {
-        // Check if the response is successful (status code 200-299)
-        if (!response.ok) {
-          throw new Error("Oops! No result found...");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        // Check if the data object has a 'cod' property indicating an error
-        if (data.cod && data.message) {
-          // Handle specific error message returned by the API
-          throw new Error(`${data.cod}: ${data.message}`);
-        }
-        // use setWeatherData to store the data in the state variable
-        setWeatherData(data);
-        // optionally, you can also log the data to the console
-        console.log(data);
-      })
-      .catch((error) => {
-        // Handle any errors that occurred during the fetch process
-        console.error("Error fetching weather data:", error.message);
-        // Display the error message on the screen
-        const errorMessageElement = document.getElementById("errorMessage");
-        errorMessageElement.innerText = error.message;
-      });
+  const [city, setCity] = useState("");
+
+  async function weatherSearchByInput() {
+    try {
+      const res = await axios.get(
+        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=877fe367e2cc86f1d48262dd0eaa94fd`
+      );
+      setWeatherData(res.data);
+    } catch (error) {
+      console.log(error);
+      setWeatherData(error.response.data);
+    }
   }
+  console.log(weatherData);
+
   return (
     <>
-      <Navbar />
-      <br />
-      <br />
-      <div className="container">
-        <div className="container">
-          <div className="container d-flex">
-            <input
-              className="form-control mx-3"
-              type="text"
-              placeholder="Enter Your City..."
-              aria-label="default input example"
-              id="inputValue"
-            />
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={weatherSearchByInput}
-            >
-              Search
-            </button>
-          </div>
-          <br />
-          <br />
-          <b><div id="errorMessage" className="container mx-5"></div></b>
+      <nav className="navbar navbar-expand-lg bg-body-tertiary">
+        <div className="container-fluid">
+          <img src={logo} style={{ width: 50 }} alt="logo" />
+          <a className="navbar-brand mx-auto" href="/">
+            WeatherApp
+          </a>
         </div>
+      </nav>
+
+      <div className="container d-flex mt-5">
+        <input
+          className="form-control mx-3"
+          type="text"
+          placeholder="Enter Your City..."
+          aria-label="default input example"
+          id="inputValue"
+          onChange={(e) => {
+            setCity(e.target.value);
+          }}
+        />
+        <button
+          className="btn btn-primary d-flex align-items-center"
+          onClick={weatherSearchByInput}
+        >
+          <IoSearchOutline className="me-2" />
+          Search
+        </button>
       </div>
-      <br />
-      <br />
-      {weatherData ? <Results weatherData={weatherData} /> : null}
+
+      {weatherData &&
+        (weatherData.cod === "404" ? (
+          <h1 className="text-center text-danger mt-5">No City Found!</h1>
+        ) : (
+          <Results weatherData={weatherData} />
+        ))}
     </>
   );
 }
