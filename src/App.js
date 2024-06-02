@@ -2,6 +2,7 @@ import logo from "./WeatherAppLogo.png";
 import { IoSearchOutline } from "react-icons/io5";
 import { TbError404Off } from "react-icons/tb";
 import { TbFaceIdError } from "react-icons/tb";
+import Swal from "sweetalert2";
 import "./App.css";
 
 import React, { useState } from "react";
@@ -13,13 +14,25 @@ function App() {
   const [city, setCity] = useState("");
 
   async function weatherSearchByInput() {
+    if (city.trim() === "") {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Please enter the city name!",
+      });
+      return;
+    }
     try {
       const res = await axios.get(
         `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=877fe367e2cc86f1d48262dd0eaa94fd`
       );
       setWeatherData(res.data);
     } catch (error) {
-      console.log(error);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Please enter a valid city name!",
+      });
       setWeatherData(error.response.data);
     }
   }
@@ -42,7 +55,6 @@ function App() {
           type="text"
           placeholder="Enter Your City..."
           aria-label="default input example"
-          id="inputValue"
           onChange={(e) => {
             setCity(e.target.value);
           }}
